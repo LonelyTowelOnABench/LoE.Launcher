@@ -37,7 +37,7 @@ namespace Zsync_the_things.Commands
             var originalHashes = new Dictionary<string, string>();
             foreach (var file in _folder.DirectoryInfo.EnumerateFiles("*", SearchOption.AllDirectories))
             {
-                var fileHash = file.FullName.GetFileHash(HashType.MD5);
+                var fileHash = file.FullName.GetFileHash();
                 originalHashes.Add(file.FullName + ".jar.zsync.jar", fileHash);
             }
             GZipFiles();

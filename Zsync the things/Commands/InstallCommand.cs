@@ -102,9 +102,12 @@ namespace Zsync_the_things.Commands
             string newPath = Path.Combine(directory.Parent.FullName, newName);
             directory.MoveTo(newPath);
         }
-        public static string GetFileHash(this string filePath, HashType type) {
+        public static string GetFileHash(this string filePath, HashType type = HashType.MD5) {
             if (!File.Exists(filePath))
                 return string.Empty;
+
+            if (type != HashType.MD5)
+                throw new ArgumentException("only HashType.MD5 is supported", nameof(type));
 
 
             using (var md5 = MD5.Create()) {

@@ -116,7 +116,7 @@ namespace Zsync_the_things.Commands
                     var realFile = item.GetUnzippedFileName().GetAbsolutePathFrom(_folder);
 
                     if (realFile.Exists &&
-                        childFileWithName.ToString().GetFileHash(HashType.MD5) == item.FileHash)
+                        childFileWithName.ToString().GetFileHash() == item.FileHash)
                         continue;
 
                     if (realFile.Exists)
