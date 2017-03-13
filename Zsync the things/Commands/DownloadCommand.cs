@@ -16,6 +16,7 @@ namespace Zsync_the_things.Commands
         private IAbsoluteDirectoryPath _folder;
         private Uri _url;
         private bool _noCleanup;
+        private static Version MinimumControlFileVersion = new Version(0, 2);
 
         public DownloadCommand() {
             IsCommand("download", "Downloads files via zsync");
@@ -65,7 +66,7 @@ namespace Zsync_the_things.Commands
                 while (queue.Any())
                 {
                     var item = queue.Dequeue();
-                    var uri = item.ContentUrl.ToString().Substring(0, item.ContentUrl.ToString().Length - 10);
+                    var uri = item.GetContentUri(toProcess.ControlFile).ToString().Substring(0, item.GetContentUri(toProcess.ControlFile).ToString().Length - 10);
                     Console.WriteLine("Processing: " + uri);
 
                     var arguments = "-u \"" + uri + "\" -o \"" + Path.GetFileNameWithoutExtension(item.InstallPath.FileName) + "\" -i \"" + Path.GetFileNameWithoutExtension(item.InstallPath.FileName) + "\" \"" +
@@ -104,6 +105,9 @@ namespace Zsync_the_things.Commands
                 result = await client.GetStringAsync(_url);
             }
             var data = new DownloadData(JsonConvert.DeserializeObject<MainControlFile>(result));
+            if (data.ControlFile.Version.CompareTo(MinimumControlFileVersion) < 0 || data.ControlFile.Version.CompareTo(new MainControlFile().Version) > 0)
+                throw new Exception("Control File Format not supported");
+
             Console.WriteLine("Downloading Control File");
             foreach (var item in data.ControlFile.Content)
             {
@@ -126,8 +130,8 @@ namespace Zsync_the_things.Commands
                     }
 
                     data.ToProcess.Add(item);
-                    
-                    var str = await client.GetByteArrayAsync(item.ContentUrl);
+
+                    var str = await client.GetByteArrayAsync(item.GetContentUri(data.ControlFile));
                     Directory.CreateDirectory(childFileWithName.ParentDirectoryPath.ToString());
                     File.WriteAllBytes(childFileWithName.GetBrotherFileWithName(Path.GetFileNameWithoutExtension(childFileWithName.FileName)).ToString(), str);
                 }

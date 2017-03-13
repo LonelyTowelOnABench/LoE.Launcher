@@ -47,5 +47,10 @@ namespace Zsync_the_things
         {
             return item.InstallPath.GetBrotherFileWithName(Path.GetFileNameWithoutExtension(item.InstallPath.FileNameWithoutExtension));
         }
+
+        public static Uri GetContentUri(this ControlFileItem item, MainControlFile controlData)
+        {
+            return new Uri(controlData.RootUri, item.RelativeContentUrl);
+        }
     }
 }

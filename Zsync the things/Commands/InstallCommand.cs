@@ -112,42 +112,6 @@ namespace Zsync_the_things.Commands
                     return md5.ComputeHash(stream).ByteArrayToString();
                 }
             }
-
-            System.Security.Cryptography.HashAlgorithm hasher;
-            switch (type) {
-                case HashType.SHA1:
-                default:
-                    hasher = new SHA1CryptoServiceProvider();
-                    break;
-                case HashType.SHA256:
-                    hasher = new SHA256Managed();
-                    break;
-                case HashType.SHA384:
-                    hasher = new SHA384Managed();
-                    break;
-                case HashType.SHA512:
-                    hasher = new SHA512Managed();
-                    break;
-                case HashType.MD5:
-                    hasher = new MD5CryptoServiceProvider();
-                    break;
-                case HashType.RIPEMD160:
-                    hasher = new RIPEMD160Managed();
-                    break;
-            }
-            StringBuilder buff = new StringBuilder();
-            try {
-                using (FileStream f = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 8192)) {
-                    hasher.ComputeHash(f);
-                    Byte[] hash = hasher.Hash;
-                    foreach (Byte hashByte in hash) {
-                        buff.Append(string.Format("{0:x2}", hashByte));
-                    }
-                }
-            } catch {
-                return "Error reading file." + new System.Random(DateTime.Now.Second * DateTime.Now.Millisecond).Next().ToString();
-            }
-            return buff.ToString();
         }
         public static string ByteArrayToString(this byte[] ba) {
             StringBuilder hex = new StringBuilder(ba.Length * 2);

@@ -39,7 +39,6 @@ namespace Zsync_the_things.Commands
             {
                 var fileHash = file.FullName.GetFileHash(HashType.MD5);
                 originalHashes.Add(file.FullName + ".jar.zsync.jar", fileHash);
-                Console.WriteLine(file.FullName + ".jar.zsync.jar " + fileHash);
             }
             GZipFiles();
             ZSyncMake();
@@ -49,17 +48,14 @@ namespace Zsync_the_things.Commands
             return _folder.DirectoryInfo.EnumerateFiles("*.zsync.jar", SearchOption.AllDirectories).Select(file =>
             {
                 var substring = file.FullName.Substring(_folder.ToString().Length);
-                var contentUrl = new Uri(_url +
-                                         substring
-                                             .Replace("\\", "/")
+                var baseUri = new Uri(_url);
+                var contentUrl = new Uri(baseUri, substring.Replace("\\", "/")
                                              .Replace(" ", "%20"));
-                Console.WriteLine(file.FullName);
                 var relativeFilePath = file.FullName.ToAbsoluteFilePath().GetRelativePathFrom(_folder);
                 var originalHash = originalHashes[file.FullName];
                 return new ControlFileItem()
                 {
-                    ContentUrl =
-                        contentUrl,
+                    RelativeContentUrl = baseUri.MakeRelativeUri(contentUrl),
                     InstallPath = relativeFilePath,
                     FileHash = originalHash
                 };
