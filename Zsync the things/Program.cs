@@ -13,6 +13,7 @@ namespace Zsync_the_things
     {
         static int Main(string[] args)
         {
+            /*
             if (Debugger.IsAttached)
             {
                 Console.WriteLine("Write Command Below");
@@ -22,6 +23,7 @@ namespace Zsync_the_things
                 Console.ReadLine();
 
             }
+            */
             return ManyConsole.ConsoleCommandDispatcher.DispatchCommand(
                 ManyConsole.ConsoleCommandDispatcher.FindCommandsInSameAssemblyAs(typeof (BaseCommand)), args,
                 Console.Out);
